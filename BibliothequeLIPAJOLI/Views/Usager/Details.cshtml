@@ -1,0 +1,84 @@
+﻿@using BibliothequeLIPAJOLI.Regles
+@model BibliothequeLIPAJOLI.Models.Usager
+
+<h2 class="mb-3">Détails de l'usager</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p><strong>Numéro d’abonné :</strong> @Model.NumeroAbonne</p>
+        <p><strong>Nom :</strong> @Model.NomComplet</p>
+        <p><strong>Courriel :</strong> @Model.Courriel</p>
+        <p><strong>Statut :</strong> @Model.Statut</p>
+        <p><strong>Défaillances :</strong> @Model.Defaillance</p>
+        <p><strong>Emprunts en cours :</strong> @Model.EmpruntsEnCours</p>
+        <p><strong>Peut emprunter :</strong> @(Pret.PeutEmprunter(Model.Defaillance, Model.EmpruntsEnCours, false) ? "OUI" : "NON")</p>
+    </div>
+</div>
+
+<h4 class="mt-4">Adresses</h4>
+<div class="card mb-4">
+    <div class="card-body">
+        @if (Model.UsagerAdresses != null && Model.UsagerAdresses.Any())
+        {
+            <ul>
+                @foreach (var ua in Model.UsagerAdresses)
+                {
+                    <li>
+                        <strong>@ua.TypeAdresse :</strong>
+                        @ua.Adresse?.Rue,
+                        @ua.Adresse?.Ville,
+                        @ua.Adresse?.Province @ua.Adresse?.CodePostale
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Aucune adresse fournie.</p>
+        }
+    </div>
+</div>
+
+<h4 class="mt-4">Emprunts</h4>
+<div class="card">
+    <div class="card-body">
+        @if (Model.Emprunts != null && Model.Emprunts.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date d’emprunt</th>
+                        <th>Date probable de retour</th>
+                        <th>Date de retour</th>
+                        <th>Statut</th>
+                        <th>En retard</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var emprunt in Model.Emprunts)
+                    {
+                        <tr>
+                            <td>@emprunt.DateEmprunt?.ToString("dd/MM/yyyy")</td>
+                            <td>@emprunt.DateProbableRetour?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @(emprunt.DateRetour.HasValue
+                                    ? emprunt.DateRetour.Value.ToString("dd/MM/yyyy")
+                                    : "Non retourné")
+                            </td>
+                            <td>
+                                @(emprunt.EstRetourne
+                                    ? "Retourné"
+                                    : (emprunt.EstEnretard ? "En retard" : "En cours"))
+                            </td>
+                            <td>@(emprunt.EstEnretard ? "OUI" : "NON")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Aucun emprunt trouvé pour cet usager.</p>
+        }
+    </div>
+</div>

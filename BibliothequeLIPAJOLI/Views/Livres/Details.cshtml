@@ -1,0 +1,135 @@
+﻿@model BibliothequeLIPAJOLI.ViewModels.LivreDetailsViewModel
+
+@{
+    ViewData["Title"] = "Détails du livre";
+}
+
+<h2 class="mb-4">@Model.Livre.Titre</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p><strong>ISBN-10 :</strong> @Model.Livre.Isbn10</p>
+        <p><strong>ISBN-13 :</strong> @Model.Livre.Isbn13</p>
+        <p><strong>Code :</strong> @Model.Livre.Code</p>
+        <p><strong>Prix :</strong> @Model.Livre.Prix?.ToString("C")</p>
+        <p><strong>Catégorie :</strong> @Model.Livre.Categorie?.NomCategorie</p>
+        <p><strong>Résumé :</strong> @Model.Livre.Resume</p>
+        <p><strong>Année :</strong> @(Model.Livre.Annee?.ToString("yyyy") ?? "N/A")</p>
+    </div>
+</div>
+
+<h4 class="mt-4">Auteurs</h4>
+<div class="card mb-4">
+    <div class="card-body">
+        @if (Model.Livre.Redactions != null && Model.Livre.Redactions.Any())
+        {
+            <ul>
+                @foreach (var redaction in Model.Livre.Redactions)
+                {
+                    <li>@redaction.Auteur?.NomComplet (@redaction.Role, ordre @redaction.Ordre)</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Aucun auteur associé.</p>
+        }
+    </div>
+</div>
+
+<h4 class="mt-4">Éditions</h4>
+<div class="card mb-4">
+    <div class="card-body">
+        @if (Model.Livre.Editions != null && Model.Livre.Editions.Any())
+        {
+            <ul>
+                @foreach (var edition in Model.Livre.Editions)
+                {
+                    <li>
+                        <strong>@edition.NomEditeur</strong> (@edition.AnneeEdition)
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Aucune édition disponible.</p>
+        }
+    </div>
+</div>
+
+<h4 class="mt-4">Exemplaires</h4>
+<div class="card mb-4">
+    <div class="card-body">
+        @if (Model.Exemplaires != null && Model.Exemplaires.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Référence</th>
+                        <th>Nombre</th>
+                        <th>Date d'achat</th>
+                        <th>Fournisseur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ex in Model.Exemplaires)
+                    {
+                        <tr>
+                            <td>@ex.Reference</td>
+                            <td>@ex.NbExemplaire</td>
+                            <td>@ex.DateAchat?.ToShortDateString()</td>
+                            <td>@ex.Fournisseur</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Aucun exemplaire enregistré.</p>
+        }
+    </div>
+</div>
+
+<h4 class="mt-4">Emprunts</h4>
+<div class="card">
+    <div class="card-body">
+        @if (Model.Emprunts != null && Model.Emprunts.Any())
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Usager</th>
+                        <th>Date emprunt</th>
+                        <th>Date retour prévue</th>
+                        <th>Date retour</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var emp in Model.Emprunts)
+                    {
+                        <tr>
+                            <td>@emp.Usager?.Nom @emp.Usager?.Prenom</td>
+                            <td>@emp.DateEmprunt?.ToShortDateString()</td>
+                            <td>@emp.DateProbableRetour?.ToShortDateString()</td>
+                            <td>@(emp.DateRetour.HasValue ? emp.DateRetour.Value.ToShortDateString() : "Non retourné")</td>
+                            <td>
+                                @(emp.EstRetourne ? "Retourné" : emp.EstEnretard ? "En retard" : "En cours")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Aucun emprunt lié à ce livre.</p>
+        }
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
+</div>

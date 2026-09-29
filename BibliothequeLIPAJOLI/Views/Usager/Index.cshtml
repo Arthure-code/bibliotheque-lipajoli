@@ -1,0 +1,51 @@
+﻿@model IEnumerable<BibliothequeLIPAJOLI.Models.Usager>
+@{
+    ViewData["Title"] = "Liste des usagers";
+}
+
+<h2>Liste des usagers</h2>
+
+<div class="mb-3">
+    <form method="get" class="form-inline">
+        <input type="text" name="chaineRecherche" class="form-control mr-2" placeholder="Rechercher par nom ou prénom" />
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+        <a asp-action="Create" class="btn btn-success ml-2">Ajouter un usager</a>
+    </form>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Numéro d’abonné</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Courriel</th>
+            <th>Statut</th>
+            <th>Défaillances</th>
+           
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usager in Model)
+        {
+            <tr>
+                <td>@usager.NumeroAbonne</td>
+                <td>@usager.Nom</td>
+                <td>@usager.Prenom</td>
+                <td>@usager.Courriel</td>
+                <td>@Html.DisplayFor(m => usager.Statut)</td>
+                <td>@usager.Defaillance</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@usager.ID" class="btn btn-info btn-sm">Détails</a>
+                    <a asp-action="Edit" asp-route-id="@usager.ID" class="btn btn-warning btn-sm">Modifier</a>
+                    <a asp-action="Delete" asp-route-id="@usager.ID" class="btn btn-danger btn-sm">Supprimer</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

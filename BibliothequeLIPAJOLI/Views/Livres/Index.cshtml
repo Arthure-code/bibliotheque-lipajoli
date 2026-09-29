@@ -1,0 +1,72 @@
+﻿@using BibliothequeLIPAJOLI.ViewModels
+@model LivreFiltreViewModel
+
+@{
+    ViewData["Title"] = "Catalogue des livres";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Ajouter un livre</a>
+</p>
+
+<form asp-action="Index" method="get" class="mb-3 d-flex align-items-center">
+    <input type="text" name="searchString"
+           value="@Model.SearchString"
+           placeholder="Titre ou auteur"
+           class="form-control me-2" style="width: 250px;" />
+
+    <select name="categorieId" class="form-control me-2" style="width: 200px;">
+        <option value="">Toutes les catégories</option>
+        @foreach (var cat in Model.Categories!)
+        {
+            <option value="@cat.Value" selected="@(cat.Value == Model.CategorieId?.ToString())">
+                @cat.Text
+            </option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-secondary">Filtrer</button>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th><a asp-action="Index" asp-route-sortOrder="code">Code</a></th>
+            <th><a asp-action="Index" asp-route-sortOrder="titre">Titre</a></th>
+            <th>Auteurs</th>
+            <th>Catégorie</th>
+            <th>Quantité</th>
+            <th>Disponible</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Livres.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center">Aucun livre trouvé.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var livre in Model.Livres)
+            {
+                <tr>
+                    <td>@livre.Code</td>
+                    <td>@livre.Titre</td>
+                    <td>@string.Join(", ", livre.Redactions?.Select(r => r.Auteur?.NomComplet) ?? new List<string>())</td>
+                    <td>@livre.Categorie?.NomCategorie</td>
+                    <td>@livre.Quantite</td>
+                    <td>@livre.QuantiteDisponible</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@livre.LivreID">Modifier</a> |
+                        <a asp-action="Details" asp-route-id="@livre.LivreID">Détails</a> |
+                        <a asp-action="Delete" asp-route-id="@livre.LivreID">Supprimer</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

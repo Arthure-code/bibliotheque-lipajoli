@@ -1,0 +1,98 @@
+﻿@model BibliothequeLIPAJOLI.ViewModels.LivreCreateViewModel
+
+@{
+    ViewData["Title"] = "Créer un livre";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <p class="text-muted">Le code du livre est attribué par la bibliothèque d'après sa catégorie.</p>
+
+    <div class="mb-3">
+        <label asp-for="Livre.Titre" class="form-label"></label>
+        <input asp-for="Livre.Titre" class="form-control" />
+        <span asp-validation-for="Livre.Titre" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Livre.Isbn10" class="form-label"></label>
+        <input asp-for="Livre.Isbn10" class="form-control" />
+        <span asp-validation-for="Livre.Isbn10" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Livre.Isbn13" class="form-label"></label>
+        <input asp-for="Livre.Isbn13" class="form-control" />
+        <span asp-validation-for="Livre.Isbn13" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Livre.Prix" class="form-label"></label>
+        <input asp-for="Livre.Prix" class="form-control" />
+        <span asp-validation-for="Livre.Prix" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Livre.CategorieID" class="form-label">Catégorie</label>
+        <select asp-for="Livre.CategorieID" asp-items="Model.Categories" class="form-select"></select>
+        <span asp-validation-for="Livre.CategorieID" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Livre.Resume" class="form-label"></label>
+        <textarea asp-for="Livre.Resume" class="form-control"></textarea>
+        <span asp-validation-for="Livre.Resume" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Livre.Annee" class="form-label"></label>
+        <input asp-for="Livre.Annee" type="date" class="form-control" />
+        <span asp-validation-for="Livre.Annee" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Auteurs</label>
+        <select asp-for="Redactions" asp-items="Model.Auteurs" class="form-select" multiple="multiple"></select>
+    </div>
+
+    <h4>Édition</h4>
+    <div class="mb-3">
+        <label asp-for="Edition.NomEditeur" class="form-label"></label>
+        <input asp-for="Edition.NomEditeur" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Edition.AnneeEdition" class="form-label"></label>
+        <input asp-for="Edition.AnneeEdition" class="form-control" />
+    </div>
+
+    <h4>Exemplaire</h4>
+    <div class="mb-3">
+        <label asp-for="Exemplaire.Reference" class="form-label"></label>
+        <input asp-for="Exemplaire.Reference" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Exemplaire.NbExemplaire" class="form-label"></label>
+        <input asp-for="Exemplaire.NbExemplaire" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Exemplaire.DateAchat" class="form-label"></label>
+        <input asp-for="Exemplaire.DateAchat" type="date" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Exemplaire.Fournisseur" class="form-label"></label>
+        <input asp-for="Exemplaire.Fournisseur" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Créer</button>
+    <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
