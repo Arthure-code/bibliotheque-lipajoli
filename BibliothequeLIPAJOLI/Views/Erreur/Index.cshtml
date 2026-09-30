@@ -1,0 +1,26 @@
+@model BibliothequeLIPAJOLI.ViewModels.ErreurViewModel
+@{
+    ViewData["Title"] = "Une erreur est survenue";
+}
+
+<h2 class="text-danger">Une erreur est survenue</h2>
+
+<p>
+    La demande n'a pas pu être traitée. Réessayez, et si le problème persiste,
+    prévenez la personne qui administre le site.
+</p>
+
+@if (Model.MontrerLIdentifiant)
+{
+    <p>
+        <strong>Numéro de la demande :</strong>
+        <code>@Model.IdentifiantDeLaRequete</code>
+    </p>
+    <p class="text-muted">
+        Ce numéro permet de retrouver la demande dans les journaux du serveur.
+    </p>
+}
+
+<a asp-controller="Usager" asp-action="Index" class="btn btn-primary">
+    Retour à la liste des usagers
+</a>

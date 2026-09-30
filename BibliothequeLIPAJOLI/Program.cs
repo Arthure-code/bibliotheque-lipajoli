@@ -70,7 +70,7 @@ namespace BibliothequeLIPAJOLI
 
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Erreur");
                 app.UseHsts();
             }
 
