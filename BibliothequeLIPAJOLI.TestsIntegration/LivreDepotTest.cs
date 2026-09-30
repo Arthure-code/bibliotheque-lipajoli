@@ -157,7 +157,8 @@ namespace BibliothequeLIPAJOLI.TestsIntegration
             Catalogue(2, "Dune", "SCI001", categorie: 2, auteur: 5);
 
             //Lorsque le terme ne ressemble a aucun titre, mais designe un auteur
-            List<Livre> livres = await _depot.ChercherAsync("herbert", new[] { 5 }, null);
+            int[] auteursTrouves = { 5 };
+            List<Livre> livres = await _depot.ChercherAsync("herbert", auteursTrouves, null);
 
             //Alors
             Assert.Equal("Dune", Assert.Single(livres).Titre);
@@ -196,7 +197,8 @@ namespace BibliothequeLIPAJOLI.TestsIntegration
             List<string?> codes = await _depot.ListerLesCodesCommencantParAsync("ROM");
 
             //Alors
-            Assert.Equal(new[] { "ROM001", "ROM002" }, codes.OrderBy(c => c));
+            string[] attendus = { "ROM001", "ROM002" };
+            Assert.Equal(attendus, codes.OrderBy(c => c));
         }
 
         [Fact]
