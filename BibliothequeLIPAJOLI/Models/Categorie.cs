@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BibliothequeLIPAJOLI.Models
 {
   
     public class Categorie
     {
+        [BindNever]
         public int CategorieID { get; set; }
 
         public string? NomCategorie { get; set; }

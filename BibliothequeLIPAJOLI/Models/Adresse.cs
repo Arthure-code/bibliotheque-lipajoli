@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace BibliothequeLIPAJOLI.Models
 {
     public class Adresse
     {
+        [BindNever]
         public int AdresseID { get; set; }
        
         public string? Rue { get; set; }
