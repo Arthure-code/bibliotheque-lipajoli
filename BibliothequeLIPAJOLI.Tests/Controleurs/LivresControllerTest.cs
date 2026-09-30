@@ -207,7 +207,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
 
             //Alors la categorie du livre et son auteur sont deja coches
             var modele = Assert.IsType<LivreFormulaireViewModel>(Assert.IsType<ViewResult>(resultat).Model);
-            Assert.Equal(new[] { 2 }, modele.Redactions);
+            Assert.Equal(2, Assert.Single(modele.Redactions));
             Assert.True(modele.Categories.Single(c => c.Value == "1").Selected);
             Assert.True(modele.Auteurs.Single(a => a.Value == "2").Selected);
         }
