@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BibliothequeLIPAJOLI.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BibliothequeLIPAJOLI.TestsIntegration", "BibliothequeLIPAJOLI.TestsIntegration\BibliothequeLIPAJOLI.TestsIntegration.csproj", "{FC27E44C-84F1-40AD-B991-A0A359A33CA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BibliothequeLIPAJOLI.TestsFonctionnels", "BibliothequeLIPAJOLI.TestsFonctionnels\BibliothequeLIPAJOLI.TestsFonctionnels.csproj", "{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{FC27E44C-84F1-40AD-B991-A0A359A33CA5}.Release|x64.Build.0 = Release|Any CPU
 		{FC27E44C-84F1-40AD-B991-A0A359A33CA5}.Release|x86.ActiveCfg = Release|Any CPU
 		{FC27E44C-84F1-40AD-B991-A0A359A33CA5}.Release|x86.Build.0 = Release|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Debug|x64.Build.0 = Debug|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Debug|x86.Build.0 = Debug|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Release|x64.ActiveCfg = Release|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Release|x64.Build.0 = Release|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Release|x86.ActiveCfg = Release|Any CPU
+		{9F56B2A2-B090-4B9D-82B7-8E6E5FE91691}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
