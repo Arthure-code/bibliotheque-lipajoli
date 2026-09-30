@@ -1,22 +1,31 @@
-using BibliothequeLIPAJOLI.Controllers;
+﻿using BibliothequeLIPAJOLI.Controllers;
 using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
-using BibliothequeLIPAJOLI.Tests.Doubles;
 using BibliothequeLIPAJOLI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace BibliothequeLIPAJOLI.Tests.Controleurs
 {
-    public class UsagerControllerTests
+    public class UsagerControllerTest
     {
         private readonly Mock<IUsagerService> _usagers = new Mock<IUsagerService>();
         private readonly UsagerController _controleur;
 
-        public UsagerControllerTests()
+        public UsagerControllerTest()
         {
-            _controleur = Controleur.Preparer(new UsagerController(_usagers.Object));
+            _controleur = new UsagerController(_usagers.Object)
+            {
+                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
+                MetadataProvider = new EmptyModelMetadataProvider(),
+                Url = Mock.Of<IUrlHelper>(),
+                TempData = Mock.Of<ITempDataDictionary>()
+            };
         }
 
         private static Usager Usager(int id = 1) => new Usager

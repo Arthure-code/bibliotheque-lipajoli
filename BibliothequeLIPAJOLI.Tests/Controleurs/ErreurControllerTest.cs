@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using BibliothequeLIPAJOLI.Controllers;
 using BibliothequeLIPAJOLI.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BibliothequeLIPAJOLI.Tests.Controleurs
 {
-    public class ErreurControllerTests : IDisposable
+    public class ErreurControllerTest : IDisposable
     {
         private readonly ErreurController _controleur = new ErreurController();
         private readonly Activity? _activiteDuDepart = Activity.Current;

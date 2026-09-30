@@ -1,14 +1,17 @@
 ﻿using BibliothequeLIPAJOLI.Controllers;
 using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
-using BibliothequeLIPAJOLI.Tests.Doubles;
 using BibliothequeLIPAJOLI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 
 namespace BibliothequeLIPAJOLI.Tests.Controleurs
 {
-    public class LivresControllerTests
+    public class LivresControllerTest
     {
         private static readonly int[] UnAuteur = { 2 };
 
@@ -16,7 +19,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         private readonly Mock<IReferentielService> _referentiel = new Mock<IReferentielService>();
         private readonly LivresController _controleur;
 
-        public LivresControllerTests()
+        public LivresControllerTest()
         {
             _referentiel.Setup(r => r.ObtenirCategories()).Returns(new List<Categorie>
             {
@@ -28,7 +31,13 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
                 new Auteur { ID = 2, Nom = "Hugo", Prenom = "Victor" }
             });
 
-            _controleur = Controleur.Preparer(new LivresController(_livres.Object, _referentiel.Object));
+            _controleur = new LivresController(_livres.Object, _referentiel.Object)
+            {
+                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
+                MetadataProvider = new EmptyModelMetadataProvider(),
+                Url = Mock.Of<IUrlHelper>(),
+                TempData = Mock.Of<ITempDataDictionary>()
+            };
         }
 
         private static Livre Livre(int id = 1) => new Livre
