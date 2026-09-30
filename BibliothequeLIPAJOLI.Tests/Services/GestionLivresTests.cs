@@ -1,4 +1,4 @@
-using BibliothequeLIPAJOLI.Interfaces;
+﻿using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.Services;
 using BibliothequeLIPAJOLI.ViewModels;
@@ -160,7 +160,7 @@ namespace BibliothequeLIPAJOLI.Tests.Services
             _depot.Setup(d => d.ListerLesCodesCommencantParAsync("ROM"))
                 .ReturnsAsync(new List<string?> { "ROM001", "ROM002" });
 
-            var formulaire = new LivreCreateViewModel
+            var formulaire = new LivreFormulaireViewModel
             {
                 Livre = new Livre { Titre = "Quatrevingt-treize", CategorieID = 1 },
                 Redactions = new List<int> { 7 }
@@ -182,7 +182,7 @@ namespace BibliothequeLIPAJOLI.Tests.Services
             _depot.Setup(d => d.ListerLesCodesCommencantParAsync(It.IsAny<string>()))
                 .ReturnsAsync(new List<string?>());
 
-            var formulaire = new LivreCreateViewModel
+            var formulaire = new LivreFormulaireViewModel
             {
                 Livre = new Livre { Titre = "Les Contemplations", CategorieID = 1 },
                 Edition = new Edition { NomEditeur = "Hetzel" },
@@ -209,7 +209,7 @@ namespace BibliothequeLIPAJOLI.Tests.Services
             _depot.Setup(d => d.ObtenirPourModificationAsync(404)).ReturnsAsync((Livre?)null);
 
             //Lorsque
-            Livre? livre = await _service.ModifierLivreCompletAsync(404, new LivreEditViewModel());
+            Livre? livre = await _service.ModifierLivreCompletAsync(404, new LivreFormulaireViewModel());
 
             //Alors rien n'est enregistre
             Assert.Null(livre);
@@ -223,7 +223,7 @@ namespace BibliothequeLIPAJOLI.Tests.Services
             Livre enBase = LivreEnRayon();
             _depot.Setup(d => d.ObtenirPourModificationAsync(1)).ReturnsAsync(enBase);
 
-            var formulaire = new LivreEditViewModel
+            var formulaire = new LivreFormulaireViewModel
             {
                 Livre = new Livre { LivreID = 99, Code = "PIRATE", Titre = "Titre corrigé", CategorieID = 1 },
                 Redactions = new List<int> { 7 }

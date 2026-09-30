@@ -115,7 +115,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
             IActionResult resultat = await _controleur.Create();
 
             //Alors les deux listes viennent du referentiel
-            var modele = Assert.IsType<LivreCreateViewModel>(Assert.IsType<ViewResult>(resultat).Model);
+            var modele = Assert.IsType<LivreFormulaireViewModel>(Assert.IsType<ViewResult>(resultat).Model);
             Assert.Equal(2, modele.Categories.Count());
             Assert.Single(modele.Auteurs);
             Assert.Equal("2", modele.Auteurs.First().Value);
@@ -125,7 +125,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Create_EnregistreLeLivreEtRevientALaListe()
         {
             //Etant donne un formulaire valide
-            var formulaire = new LivreCreateViewModel { Livre = Livre(0), Redactions = UnAuteur.ToList() };
+            var formulaire = new LivreFormulaireViewModel { Livre = Livre(0), Redactions = UnAuteur.ToList() };
             _livres.Setup(s => s.CreerLivreCompletAsync(formulaire)).ReturnsAsync(formulaire.Livre);
 
             //Lorsque
@@ -140,15 +140,15 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Create_NEnregistreRienQuandLeModeleEstInvalide()
         {
             //Etant donne un titre manquant
-            var formulaire = new LivreCreateViewModel();
+            var formulaire = new LivreFormulaireViewModel();
             _controleur.ModelState.AddModelError("Livre.Titre", "Le titre est requis.");
 
             //Lorsque
             IActionResult resultat = await _controleur.Create(formulaire);
 
             //Alors rien n'est ecrit, et les listes sont de retour
-            _livres.Verify(s => s.CreerLivreCompletAsync(It.IsAny<LivreCreateViewModel>()), Times.Never);
-            var modele = Assert.IsType<LivreCreateViewModel>(Assert.IsType<ViewResult>(resultat).Model);
+            _livres.Verify(s => s.CreerLivreCompletAsync(It.IsAny<LivreFormulaireViewModel>()), Times.Never);
+            var modele = Assert.IsType<LivreFormulaireViewModel>(Assert.IsType<ViewResult>(resultat).Model);
             Assert.Equal(2, modele.Categories.Count());
             Assert.Single(modele.Auteurs);
         }
@@ -165,7 +165,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
             IActionResult resultat = await _controleur.Edit(1);
 
             //Alors
-            var modele = Assert.IsType<LivreEditViewModel>(Assert.IsType<ViewResult>(resultat).Model);
+            var modele = Assert.IsType<LivreFormulaireViewModel>(Assert.IsType<ViewResult>(resultat).Model);
             Assert.Equal(UnAuteur, modele.Redactions);
             Assert.True(modele.Categories.Single(c => c.Value == "1").Selected);
             Assert.True(modele.Auteurs.Single(a => a.Value == "2").Selected);
@@ -184,7 +184,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Edit_ModifieLeLivreDesigneParLAdresseEtNonParLeFormulaire()
         {
             //Etant donne un formulaire qui pretend modifier un autre livre
-            var formulaire = new LivreEditViewModel { Livre = Livre(99) };
+            var formulaire = new LivreFormulaireViewModel { Livre = Livre(99) };
             _livres.Setup(s => s.ModifierLivreCompletAsync(1, formulaire)).ReturnsAsync(formulaire.Livre);
 
             //Lorsque la requete arrive sur /Livres/Edit/1
@@ -192,7 +192,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
 
             //Alors c'est le livre 1 qui est modifie, pas le 99
             _livres.Verify(s => s.ModifierLivreCompletAsync(1, formulaire), Times.Once);
-            _livres.Verify(s => s.ModifierLivreCompletAsync(99, It.IsAny<LivreEditViewModel>()), Times.Never);
+            _livres.Verify(s => s.ModifierLivreCompletAsync(99, It.IsAny<LivreFormulaireViewModel>()), Times.Never);
             Assert.Equal("Index", Assert.IsType<RedirectToActionResult>(resultat).ActionName);
         }
 
@@ -200,7 +200,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Edit_EnregistreLesChangementsEtRevientALaListe()
         {
             //Etant donne un formulaire valide
-            var formulaire = new LivreEditViewModel { Livre = Livre() };
+            var formulaire = new LivreFormulaireViewModel { Livre = Livre() };
             _livres.Setup(s => s.ModifierLivreCompletAsync(1, formulaire)).ReturnsAsync(formulaire.Livre);
 
             //Lorsque
@@ -215,7 +215,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Edit_RetourneIntrouvableQuandLeLivreADisparuEntreTemps()
         {
             //Etant donne un livre supprime par quelqu'un d'autre
-            var formulaire = new LivreEditViewModel { Livre = Livre() };
+            var formulaire = new LivreFormulaireViewModel { Livre = Livre() };
             _livres.Setup(s => s.ModifierLivreCompletAsync(1, formulaire)).ReturnsAsync((Livre?)null);
 
             //Alors
