@@ -367,3 +367,6 @@ FodyWeavers.xsd
 /BibliothequeLIPAJOLI/Models/ErrorViewModel.cs
 /BibliothequeLIPAJOLI/Models/ErrorViewModel.cs
 /BibliothequeLIPAJOLI/Views/Shared/Error.cshtml
+
+# Rapports de tests
+TestResults/
