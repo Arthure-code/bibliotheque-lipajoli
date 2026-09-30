@@ -1,0 +1,25 @@
+﻿@model Usager
+@{
+    ViewData["Title"] = "Supprimer un usager";
+}
+
+<h2>Supprimer l'usager</h2>
+
+<div class="alert alert-danger">
+    Êtes-vous sûr de vouloir supprimer cet usager ?
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>Nom :</strong> @Model.NumeroAbonne</p>
+        <p><strong>Nom :</strong> @Model.NomComplet</p>
+        <p><strong>Email :</strong> @Model.Courriel</p>
+        <p><strong>Statut :</strong> @Model.Statut</p>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post" class="mt-3">
+    <input type="hidden" asp-for="ID" />
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+    <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+</form>

@@ -1,0 +1,27 @@
+﻿@model Livre
+
+<h2>Supprimer le livre</h2>
+
+@if (ViewData.ModelState.ErrorCount > 0)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+<p>Êtes-vous sûr de vouloir supprimer ce livre ?</p>
+
+<div>
+    <h4>@Model.Titre</h4>
+    <p>Code: @Model.Code</p>
+    <p>Prix: @Model.Prix?.ToString("C")</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="LivreID" />
+    <input type="submit" value="Supprimer" class="btn btn-danger" />
+    <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+</form>
