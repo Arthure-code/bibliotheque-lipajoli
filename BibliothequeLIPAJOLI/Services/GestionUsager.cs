@@ -8,9 +8,9 @@ namespace BibliothequeLIPAJOLI.Services
 {
     public class GestionUsager : IUsagerService
     {
-        private readonly BibliothequeLIPAJOLIContext _context;
+        private readonly BibliothequeLipajoliContext _context;
 
-        public GestionUsager(BibliothequeLIPAJOLIContext context)
+        public GestionUsager(BibliothequeLipajoliContext context)
         {
             _context = context;
         }
@@ -22,27 +22,28 @@ namespace BibliothequeLIPAJOLI.Services
                 .ToListAsync();
         }
 
-        public async Task<Usager?> ObtenirUsagerParIdAsync(int id)
+        public async Task<Usager?> ObtenirUsagerParIdAsync(int identifiantUsager)
         {
             return await _context.Usagers
                 .Include(u => u.Emprunts)
                 .Include(u => u.UsagerAdresses)
                     .ThenInclude(ua => ua.Adresse)
+                .AsSplitQuery()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.ID == id);
+                .FirstOrDefaultAsync(u => u.ID == identifiantUsager);
         }
 
-        public async Task<IEnumerable<Usager>> RechercherUsagersAsync(string chaineRecherche)
+        public async Task<IEnumerable<Usager>> RechercherUsagersAsync(string texteCherche)
         {
             return await _context.Usagers
-                .Where(u => u.Nom.Contains(chaineRecherche) || u.Prenom.Contains(chaineRecherche))
+                .Where(u => u.Nom.Contains(texteCherche) || u.Prenom.Contains(texteCherche))
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task SupprimerUsagerAsync(int id)
+        public async Task SupprimerUsagerAsync(int identifiantUsager)
         {
-            var usager = await _context.Usagers.FindAsync(id);
+            var usager = await _context.Usagers.FindAsync(identifiantUsager);
             if (usager != null)
             {
                 _context.Usagers.Remove(usager);
@@ -50,51 +51,52 @@ namespace BibliothequeLIPAJOLI.Services
             }
         }
 
-        public async Task AjouterUsagerCompletAsync(UsagerCreateViewModel model)
+        public async Task AjouterUsagerCompletAsync(UsagerCreateViewModel formulaire)
         {
             var usagerAdresse = new UsagerAdresse
             {
-                Usager = model.Usager,
-                Adresse = model.Adresse,
-                TypeAdresse = model.TypeAdresse
+                Usager = formulaire.Usager,
+                Adresse = formulaire.Adresse,
+                TypeAdresse = formulaire.TypeAdresse
             };
 
             _context.UsagerAdresses.Add(usagerAdresse);
             await _context.SaveChangesAsync();
         }
 
-        public async Task MettreAJourUsagerCompletAsync(int id, UsagerCreateViewModel model)
+        public async Task MettreAJourUsagerCompletAsync(int identifiantUsager, UsagerCreateViewModel formulaire)
         {
-            var usager = await _context.Usagers.FindAsync(id);
+            var usager = await _context.Usagers.FindAsync(identifiantUsager);
             if (usager == null)
             {
                 return;
             }
 
-            usager.Nom = model.Usager.Nom;
-            usager.Prenom = model.Usager.Prenom;
-            usager.Courriel = model.Usager.Courriel;
-            usager.Statut = model.Usager.Statut;
-            usager.NumeroAbonne = model.Usager.NumeroAbonne;
+            usager.Nom = formulaire.Usager.Nom;
+            usager.Prenom = formulaire.Usager.Prenom;
+            usager.Courriel = formulaire.Usager.Courriel;
+            usager.Statut = formulaire.Usager.Statut;
+            usager.NumeroAbonne = formulaire.Usager.NumeroAbonne;
 
             var usagerAdresse = await _context.UsagerAdresses
                 .Include(ua => ua.Adresse)
-                .FirstOrDefaultAsync(ua => ua.UsagerID == id && ua.TypeAdresse == model.TypeAdresse);
+                .FirstOrDefaultAsync(ua => ua.UsagerID == identifiantUsager
+                    && ua.TypeAdresse == formulaire.TypeAdresse);
 
             if (usagerAdresse?.Adresse != null)
             {
-                usagerAdresse.Adresse.Rue = model.Adresse.Rue;
-                usagerAdresse.Adresse.Ville = model.Adresse.Ville;
-                usagerAdresse.Adresse.Province = model.Adresse.Province;
-                usagerAdresse.Adresse.CodePostale = model.Adresse.CodePostale;
+                usagerAdresse.Adresse.Rue = formulaire.Adresse.Rue;
+                usagerAdresse.Adresse.Ville = formulaire.Adresse.Ville;
+                usagerAdresse.Adresse.Province = formulaire.Adresse.Province;
+                usagerAdresse.Adresse.CodePostale = formulaire.Adresse.CodePostale;
             }
             else
             {
                 _context.UsagerAdresses.Add(new UsagerAdresse
                 {
-                    UsagerID = id,
-                    Adresse = model.Adresse,
-                    TypeAdresse = model.TypeAdresse
+                    UsagerID = identifiantUsager,
+                    Adresse = formulaire.Adresse,
+                    TypeAdresse = formulaire.TypeAdresse
                 });
             }
 

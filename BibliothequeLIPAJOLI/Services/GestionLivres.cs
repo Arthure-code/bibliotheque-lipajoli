@@ -9,10 +9,10 @@ namespace BibliothequeLIPAJOLI.Services
 {
     public class GestionLivres : ILivreService
     {
-        private readonly BibliothequeLIPAJOLIContext _context;
+        private readonly BibliothequeLipajoliContext _context;
         private readonly IReferentielService _referentiel;
 
-        public GestionLivres(BibliothequeLIPAJOLIContext context, IReferentielService referentiel)
+        public GestionLivres(BibliothequeLipajoliContext context, IReferentielService referentiel)
         {
             _context = context;
             _referentiel = referentiel;
@@ -103,24 +103,26 @@ namespace BibliothequeLIPAJOLI.Services
             return formulaire.Livre;
         }
 
-        public async Task<Livre?> ModifierLivreCompletAsync(LivreEditViewModel formulaire)
+        public async Task<Livre?> ModifierLivreCompletAsync(int identifiantLivre, LivreEditViewModel formulaire)
         {
             ArgumentNullException.ThrowIfNull(formulaire);
 
             Livre? livre = await _context.Livres
                 .Include(l => l.Redactions)
                 .Include(l => l.Editions).ThenInclude(e => e.Exemplaires)
-                .FirstOrDefaultAsync(l => l.LivreID == formulaire.Livre.LivreID);
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(l => l.LivreID == identifiantLivre);
 
             if (livre == null)
             {
                 return null;
             }
 
-            // Le code appartient au livre pour toute sa vie.
-            string codeAttribue = livre.Code!;
+            // L'identite du livre ne vient pas du formulaire : ni sa cle,
+            // ni son code, qui lui appartient pour toute sa vie.
+            formulaire.Livre.LivreID = livre.LivreID;
+            formulaire.Livre.Code = livre.Code;
             _context.Entry(livre).CurrentValues.SetValues(formulaire.Livre);
-            livre.Code = codeAttribue;
 
             livre.Redactions = formulaire.Redactions.Select(auteurId => new Redaction
             {
@@ -153,7 +155,8 @@ namespace BibliothequeLIPAJOLI.Services
             return (depuis ?? _context.Livres)
                 .Include(l => l.Redactions)
                 .Include(l => l.Editions).ThenInclude(e => e.Exemplaires)
-                    .ThenInclude(ex => ex.Emprunts);
+                    .ThenInclude(ex => ex.Emprunts)
+                .AsSplitQuery();
         }
 
         private void Enrichir(Livre livre)

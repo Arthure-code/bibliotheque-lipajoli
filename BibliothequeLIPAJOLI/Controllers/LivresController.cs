@@ -125,11 +125,9 @@ namespace BibliothequeLIPAJOLI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, LivreEditViewModel vm)
         {
-            if (id != vm.Livre.LivreID) return NotFound();
-
             if (ModelState.IsValid)
             {
-                var livre = await _livres.ModifierLivreCompletAsync(vm);
+                var livre = await _livres.ModifierLivreCompletAsync(id, vm);
                 if (livre == null) return NotFound();
 
                 return RedirectToAction(nameof(Index));
@@ -157,9 +155,9 @@ namespace BibliothequeLIPAJOLI.Controllers
             if (livre == null)
                 return NotFound();
 
-            bool estEmprunte = livre.Editions?
-                .SelectMany(e => e.Exemplaires ?? new List<Exemplaire>())
-                .Any(ex => ex.Emprunts != null && ex.Emprunts.Any()) ?? false;
+            bool estEmprunte = livre.Editions
+                .SelectMany(e => e.Exemplaires)
+                .Any(ex => ex.Emprunts.Count > 0);
 
             if (estEmprunte)
             {
