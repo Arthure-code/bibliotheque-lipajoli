@@ -1,4 +1,4 @@
-using BibliothequeLIPAJOLI.Controllers;
+﻿using BibliothequeLIPAJOLI.Controllers;
 using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.ViewModels;
@@ -121,7 +121,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
             IActionResult resultat = await controleur.Create();
 
             //Alors les deux listes viennent du referentiel
-            var modele = Assert.IsType<LivreCreateViewModel>(Assert.IsType<ViewResult>(resultat).Model);
+            var modele = Assert.IsType<LivreFormulaireViewModel>(Assert.IsType<ViewResult>(resultat).Model);
             Assert.Equal(2, modele.Categories.Count());
             Assert.Single(modele.Auteurs);
             Assert.Equal("2", modele.Auteurs.First().Value);
@@ -131,7 +131,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Create_EnregistreLeLivreEtRevientALaListe()
         {
             //Etant donne un formulaire valide
-            var formulaire = new LivreCreateViewModel
+            var formulaire = new LivreFormulaireViewModel
             {
                 Livre = new Livre { Code = "ROM001", Titre = "Les Misérables", CategorieID = 1 },
                 Redactions = new List<int> { 2 }
@@ -167,11 +167,11 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
             controleur.ModelState.AddModelError("Livre.Titre", "Le titre est requis.");
 
             //Lorsque
-            IActionResult resultat = await controleur.Create(new LivreCreateViewModel());
+            IActionResult resultat = await controleur.Create(new LivreFormulaireViewModel());
 
             //Alors rien n'est ecrit, et les listes sont de retour
-            livres.Verify(s => s.CreerLivreCompletAsync(It.IsAny<LivreCreateViewModel>()), Times.Never);
-            var modele = Assert.IsType<LivreCreateViewModel>(Assert.IsType<ViewResult>(resultat).Model);
+            livres.Verify(s => s.CreerLivreCompletAsync(It.IsAny<LivreFormulaireViewModel>()), Times.Never);
+            var modele = Assert.IsType<LivreFormulaireViewModel>(Assert.IsType<ViewResult>(resultat).Model);
             Assert.Equal(2, modele.Categories.Count());
             Assert.Single(modele.Auteurs);
         }
@@ -206,7 +206,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
             IActionResult resultat = await controleur.Edit(1);
 
             //Alors la categorie du livre et son auteur sont deja coches
-            var modele = Assert.IsType<LivreEditViewModel>(Assert.IsType<ViewResult>(resultat).Model);
+            var modele = Assert.IsType<LivreFormulaireViewModel>(Assert.IsType<ViewResult>(resultat).Model);
             Assert.Equal(new[] { 2 }, modele.Redactions);
             Assert.True(modele.Categories.Single(c => c.Value == "1").Selected);
             Assert.True(modele.Auteurs.Single(a => a.Value == "2").Selected);
@@ -229,7 +229,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Edit_ModifieLeLivreDesigneParLAdresseEtNonParLeFormulaire()
         {
             //Etant donne un formulaire qui pretend modifier un autre livre
-            var formulaire = new LivreEditViewModel
+            var formulaire = new LivreFormulaireViewModel
             {
                 Livre = new Livre { LivreID = 99, Code = "ROM001", Titre = "Les Misérables", CategorieID = 1 }
             };
@@ -242,7 +242,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
 
             //Alors c'est le livre 1 qui est modifie, pas le 99
             livres.Verify(s => s.ModifierLivreCompletAsync(1, formulaire), Times.Once);
-            livres.Verify(s => s.ModifierLivreCompletAsync(99, It.IsAny<LivreEditViewModel>()), Times.Never);
+            livres.Verify(s => s.ModifierLivreCompletAsync(99, It.IsAny<LivreFormulaireViewModel>()), Times.Never);
             Assert.Equal("Index", Assert.IsType<RedirectToActionResult>(resultat).ActionName);
         }
 
@@ -250,7 +250,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Edit_EnregistreLesChangementsEtRevientALaListe()
         {
             //Etant donne un formulaire valide
-            var formulaire = new LivreEditViewModel
+            var formulaire = new LivreFormulaireViewModel
             {
                 Livre = new Livre { LivreID = 1, Code = "ROM001", Titre = "Les Misérables", CategorieID = 1 }
             };
@@ -270,7 +270,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         public async Task Edit_RetourneIntrouvableQuandLeLivreADisparuEntreTemps()
         {
             //Etant donne un livre supprime par quelqu'un d'autre
-            var formulaire = new LivreEditViewModel
+            var formulaire = new LivreFormulaireViewModel
             {
                 Livre = new Livre { LivreID = 1, Code = "ROM001", Titre = "Les Misérables", CategorieID = 1 }
             };

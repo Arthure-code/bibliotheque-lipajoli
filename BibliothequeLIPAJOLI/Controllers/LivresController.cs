@@ -63,7 +63,7 @@ namespace BibliothequeLIPAJOLI.Controllers
 
         public async Task<IActionResult> Create()
         {
-            var viewModel = new LivreCreateViewModel
+            var viewModel = new LivreFormulaireViewModel
             {
                 Categories = (_referentiel.ObtenirCategories())
                     .Select(c => new SelectListItem { Value = c.CategorieID.ToString(), Text = c.NomCategorie }),
@@ -75,7 +75,7 @@ namespace BibliothequeLIPAJOLI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LivreCreateViewModel viewModel)
+        public async Task<IActionResult> Create(LivreFormulaireViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -100,7 +100,7 @@ namespace BibliothequeLIPAJOLI.Controllers
             var categories = _referentiel.ObtenirCategories();
             var auteurs = _referentiel.ObtenirAuteurs();
 
-            var viewModel = new LivreEditViewModel
+            var viewModel = new LivreFormulaireViewModel
             {
                 Livre = livre,
                 Categories = categories.Select(c => new SelectListItem
@@ -123,7 +123,7 @@ namespace BibliothequeLIPAJOLI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, LivreEditViewModel vm)
+        public async Task<IActionResult> Edit(int id, LivreFormulaireViewModel vm)
         {
             if (ModelState.IsValid)
             {

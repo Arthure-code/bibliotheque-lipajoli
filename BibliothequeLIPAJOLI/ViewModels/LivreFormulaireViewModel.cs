@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BibliothequeLIPAJOLI.ViewModels
 {
-    public class LivreEditViewModel
+    // Cataloguer un livre et le corriger demandent la meme chose : un seul
+    // formulaire, donc un seul modele.
+    public class LivreFormulaireViewModel
     {
         public Livre Livre { get; set; } = new Livre();
         public Edition Edition { get; set; } = new Edition();
@@ -13,7 +15,8 @@ namespace BibliothequeLIPAJOLI.ViewModels
 
         public List<int> Redactions { get; set; } = new List<int>();
 
-        // Voir LivreCreateViewModel : listes d'affichage, hors liaison.
+        // Listes d'affichage : le navigateur ne les renvoie pas, et les
+        // valider ferait echouer l'envoi sur des champs absents de l'ecran.
         [BindNever]
         [ValidateNever]
         public IEnumerable<SelectListItem> Auteurs { get; set; } = new List<SelectListItem>();

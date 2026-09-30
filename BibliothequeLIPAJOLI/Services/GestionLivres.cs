@@ -50,7 +50,7 @@ namespace BibliothequeLIPAJOLI.Services
             };
         }
 
-        public async Task<Livre> CreerLivreCompletAsync(LivreCreateViewModel formulaire)
+        public async Task<Livre> CreerLivreCompletAsync(LivreFormulaireViewModel formulaire)
         {
             ArgumentNullException.ThrowIfNull(formulaire);
 
@@ -77,7 +77,7 @@ namespace BibliothequeLIPAJOLI.Services
             return formulaire.Livre;
         }
 
-        public async Task<Livre?> ModifierLivreCompletAsync(int identifiantLivre, LivreEditViewModel formulaire)
+        public async Task<Livre?> ModifierLivreCompletAsync(int identifiantLivre, LivreFormulaireViewModel formulaire)
         {
             ArgumentNullException.ThrowIfNull(formulaire);
 

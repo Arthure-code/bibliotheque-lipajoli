@@ -11,9 +11,9 @@ namespace BibliothequeLIPAJOLI.Interfaces
 
         List<Livre> TrierLivres(List<Livre> livres, string ordre);
 
-        Task<Livre> CreerLivreCompletAsync(LivreCreateViewModel formulaire);
+        Task<Livre> CreerLivreCompletAsync(LivreFormulaireViewModel formulaire);
 
-        Task<Livre?> ModifierLivreCompletAsync(int identifiantLivre, LivreEditViewModel formulaire);
+        Task<Livre?> ModifierLivreCompletAsync(int identifiantLivre, LivreFormulaireViewModel formulaire);
 
         Task<bool> SupprimerLivreAsync(int identifiantLivre);
     }
