@@ -5,14 +5,14 @@ namespace BibliothequeLIPAJOLI.Validation
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class AuPlusDeuxDecimalesAttribute : ValidationAttribute
     {
-        public override bool IsValid(object? valeur)
+        public override bool IsValid(object? value)
         {
-            if (valeur is null)
+            if (value is null)
             {
                 return true;
             }
 
-            if (valeur is not decimal nombre)
+            if (value is not decimal nombre)
             {
                 return false;
             }

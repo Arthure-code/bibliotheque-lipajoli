@@ -2,6 +2,7 @@
 using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BibliothequeLIPAJOLI.Controllers
 {
@@ -84,10 +85,17 @@ namespace BibliothequeLIPAJOLI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, bool? suppressionImpossible = false)
         {
             var usager = await _usagerService.ObtenirUsagerParIdAsync(id);
             if (usager == null) return NotFound();
+
+            if (suppressionImpossible.GetValueOrDefault())
+            {
+                ViewData["MessageErreur"] =
+                    "La suppression a échoué. Réessayez, et si le problème persiste, "
+                    + "prévenez la personne qui administre le site.";
+            }
 
             return View(usager);
         }
@@ -96,8 +104,15 @@ namespace BibliothequeLIPAJOLI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _usagerService.SupprimerUsagerAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _usagerService.SupprimerUsagerAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                return RedirectToAction(nameof(Delete), new { id, suppressionImpossible = true });
+            }
         }
     }
 }

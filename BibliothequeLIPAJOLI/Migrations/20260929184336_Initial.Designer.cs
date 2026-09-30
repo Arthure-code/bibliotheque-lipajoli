@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BibliothequeLIPAJOLI.Migrations
 {
-    [DbContext(typeof(BibliothequeLIPAJOLIContext))]
+    [DbContext(typeof(BibliothequeLipajoliContext))]
     [Migration("20260929184336_Initial")]
     partial class Initial
     {

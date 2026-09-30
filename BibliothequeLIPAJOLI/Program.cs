@@ -8,13 +8,13 @@ using BibliothequeLIPAJOLI.Interfaces;
 
 namespace BibliothequeLIPAJOLI
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddDbContext<BibliothequeLIPAJOLIContext>(options =>
-                options.UseSqlite(builder.Configuration.GetConnectionString("BibliothequeLIPAJOLIContext") ?? throw new InvalidOperationException("Connection string 'BibliothequeLIPAJOLIContext' not found.")));
+            builder.Services.AddDbContext<BibliothequeLipajoliContext>(options =>
+                options.UseSqlite(builder.Configuration.GetConnectionString("BibliothequeLipajoliContext") ?? throw new InvalidOperationException("Connection string 'BibliothequeLipajoliContext' not found.")));
 
             builder.Services.AddScoped<ILivreService, GestionLivres>();
             builder.Services.AddScoped<IUsagerService, GestionUsager>();
@@ -77,11 +77,11 @@ namespace BibliothequeLIPAJOLI
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<BibliothequeLIPAJOLIContext>();
+                var context = services.GetRequiredService<BibliothequeLipajoliContext>();
                 var reglages = services.GetRequiredService<IReferentielService>();
                 // EnsureCreated ne jouerait pas les migrations et
                 // laisserait la table d'historique vide.
-                context.Database.Migrate();
+                await context.Database.MigrateAsync();
                 await DbInitializer.Initialize(context, reglages.JoursDePret);
             }
 
@@ -96,7 +96,7 @@ namespace BibliothequeLIPAJOLI
                 name: "default",
                 pattern: "{controller=Usager}/{action=Index}/{id?}");
 
-            app.Run();
+            await app.RunAsync();
         }
     }
   

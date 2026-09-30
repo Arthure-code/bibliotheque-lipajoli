@@ -8,6 +8,7 @@ namespace BibliothequeLIPAJOLI.Models
 {
     public class Livre
     {
+        [BindNever]
         public int LivreID { get; set; }
 
         [BindNever]
@@ -79,6 +80,8 @@ namespace BibliothequeLIPAJOLI.Models
 
         public bool? EnStock { get; set; } = true;
 
+        [Range(1, int.MaxValue, ErrorMessage = "La catégorie est requise.")]
+        [Display(Name = "Catégorie")]
         public int CategorieID { get; set; }
 
         [Display(Name = "Langue")]

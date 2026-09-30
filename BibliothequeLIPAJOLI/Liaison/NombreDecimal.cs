@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace BibliothequeLIPAJOLI.Liaison
 {
@@ -8,7 +8,7 @@ namespace BibliothequeLIPAJOLI.Liaison
         private const char Point = '.';
 
         // Les quatre façons d'espacer les milliers.
-        private static readonly char[] Espaces = { ' ', '\u00A0', '\u202F', '\'' };
+        private static readonly char[] Espaces = { ' ', ' ', ' ', '\'' };
 
         public static bool EssayerDeLire(string? texte, out decimal valeur)
         {
@@ -19,11 +19,7 @@ namespace BibliothequeLIPAJOLI.Liaison
                 return false;
             }
 
-            string reste = texte.Trim();
-            foreach (char espace in Espaces)
-            {
-                reste = reste.Replace(espace.ToString(), string.Empty);
-            }
+            string reste = SansEspaces(texte.Trim());
 
             string signe = string.Empty;
             if (reste.StartsWith('-') || reste.StartsWith('+'))
@@ -37,10 +33,29 @@ namespace BibliothequeLIPAJOLI.Liaison
                 return false;
             }
 
+            if (!EssayerDeNormaliser(reste, out string normalise))
+            {
+                return false;
+            }
+
+            return decimal.TryParse(signe + normalise, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+                CultureInfo.InvariantCulture, out valeur);
+        }
+
+        private static string SansEspaces(string texte)
+        {
+            foreach (char espace in Espaces)
+            {
+                texte = texte.Replace(espace.ToString(), string.Empty);
+            }
+
+            return texte;
+        }
+
+        private static bool EssayerDeNormaliser(string reste, out string normalise)
+        {
             int virgules = reste.Count(c => c == Virgule);
             int points = reste.Count(c => c == Point);
-
-            string normalise;
 
             if (virgules > 0 && points > 0)
             {
@@ -50,43 +65,48 @@ namespace BibliothequeLIPAJOLI.Liaison
                 char millierSeparateur = decimalSeparateur == Virgule ? Point : Virgule;
                 normalise = reste.Replace(millierSeparateur.ToString(), string.Empty)
                                  .Replace(decimalSeparateur, Point);
+                return true;
             }
-            else if (virgules + points == 0)
+
+            if (virgules + points == 0)
             {
                 normalise = reste;
+                return true;
             }
-            else
+
+            char separateur = virgules > 0 ? Virgule : Point;
+
+            if (virgules + points > 1)
             {
-                char separateur = virgules > 0 ? Virgule : Point;
-
-                if (virgules + points > 1)
-                {
-                    // Répété, il ne peut que grouper les milliers : 1.000.000
-                    normalise = reste.Replace(separateur.ToString(), string.Empty);
-                }
-                else
-                {
-                    int position = reste.IndexOf(separateur);
-                    int decimales = reste.Length - position - 1;
-
-                    if (decimales == 0)
-                    {
-                        return false;
-                    }
-
-                    // 10,000 vaut dix mille pour un anglophone et dix pour un
-                    // francophone : personne ne peut trancher, donc on refuse.
-                    if (decimales == 3 && position > 0)
-                    {
-                        return false;
-                    }
-
-                    normalise = reste.Replace(separateur, Point);
-                }
+                // Répété, il ne peut que grouper les milliers : 1.000.000
+                normalise = reste.Replace(separateur.ToString(), string.Empty);
+                return true;
             }
 
-            return decimal.TryParse(signe + normalise, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
-                CultureInfo.InvariantCulture, out valeur);
+            return EssayerAvecUnSeulSeparateur(reste, separateur, out normalise);
+        }
+
+        private static bool EssayerAvecUnSeulSeparateur(string reste, char separateur, out string normalise)
+        {
+            normalise = string.Empty;
+
+            int position = reste.IndexOf(separateur);
+            int decimales = reste.Length - position - 1;
+
+            if (decimales == 0)
+            {
+                return false;
+            }
+
+            // 10,000 vaut dix mille pour un anglophone et dix pour un
+            // francophone : personne ne peut trancher, donc on refuse.
+            if (decimales == 3 && position > 0)
+            {
+                return false;
+            }
+
+            normalise = reste.Replace(separateur, Point);
+            return true;
         }
     }
 }

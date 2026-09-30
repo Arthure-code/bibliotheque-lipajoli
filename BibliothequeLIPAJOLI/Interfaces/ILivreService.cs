@@ -13,7 +13,7 @@ namespace BibliothequeLIPAJOLI.Interfaces
 
         Task<Livre> CreerLivreCompletAsync(LivreCreateViewModel formulaire);
 
-        Task<Livre?> ModifierLivreCompletAsync(LivreEditViewModel formulaire);
+        Task<Livre?> ModifierLivreCompletAsync(int identifiantLivre, LivreEditViewModel formulaire);
 
         Task<bool> SupprimerLivreAsync(int identifiantLivre);
     }

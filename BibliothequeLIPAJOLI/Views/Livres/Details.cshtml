@@ -115,9 +115,7 @@
                             <td>@emp.DateEmprunt?.ToShortDateString()</td>
                             <td>@emp.DateProbableRetour?.ToShortDateString()</td>
                             <td>@(emp.DateRetour.HasValue ? emp.DateRetour.Value.ToShortDateString() : "Non retourné")</td>
-                            <td>
-                                @(emp.EstRetourne ? "Retourné" : emp.EstEnretard ? "En retard" : "En cours")
-                            </td>
+                            <td>@EtatDeLEmprunt(emp)</td>
                         </tr>
                     }
                 </tbody>
@@ -133,3 +131,15 @@
 <div class="mt-4">
     <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
 </div>
+
+@functions {
+    static string EtatDeLEmprunt(Emprunt emprunt)
+    {
+        if (emprunt.EstRetourne)
+        {
+            return "Retourné";
+        }
+
+        return emprunt.EstEnretard ? "En retard" : "En cours";
+    }
+}

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BibliothequeLIPAJOLI.Migrations
 {
-    [DbContext(typeof(BibliothequeLIPAJOLIContext))]
-    partial class BibliothequeLIPAJOLIContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(BibliothequeLipajoliContext))]
+    partial class BibliothequeLipajoliContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

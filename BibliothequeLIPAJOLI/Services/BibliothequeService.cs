@@ -22,18 +22,18 @@ namespace BibliothequeLIPAJOLI.Services
             int joursLus = section.GetValue<int>("JoursDePret");
             JoursDePret = joursLus > 0 ? joursLus : JoursDePretParDefaut;
         }
-        public Categorie? ObtenirCategorieParId(int id)
+        public Categorie? ObtenirCategorieParId(int identifiantCategorie)
         {
-            return _categories.FirstOrDefault(c => c.CategorieID == id);
+            return _categories.FirstOrDefault(c => c.CategorieID == identifiantCategorie);
         }
 
         public List<Categorie> ObtenirCategories()
         {
             return _categories.ToList();
         }
-        public Auteur? ObtenirAuteurParId(int id)
+        public Auteur? ObtenirAuteurParId(int identifiantAuteur)
         {
-            return _auteurs.FirstOrDefault(a => a.ID == id);
+            return _auteurs.FirstOrDefault(a => a.ID == identifiantAuteur);
         }
 
         public List<Auteur> ObtenirAuteurs()
