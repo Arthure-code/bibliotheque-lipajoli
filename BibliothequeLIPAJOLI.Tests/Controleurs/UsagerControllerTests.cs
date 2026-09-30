@@ -1,4 +1,4 @@
-using BibliothequeLIPAJOLI.Controllers;
+﻿using BibliothequeLIPAJOLI.Controllers;
 using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.Tests.Doubles;
@@ -238,7 +238,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
             var redirection = Assert.IsType<RedirectToActionResult>(resultat);
             Assert.Equal("Delete", redirection.ActionName);
             Assert.Equal(1, redirection.RouteValues!["id"]);
-            Assert.Equal(true, redirection.RouteValues["suppressionImpossible"]);
+            Assert.True(Assert.IsType<bool>(redirection.RouteValues["suppressionImpossible"]));
         }
     }
 }
