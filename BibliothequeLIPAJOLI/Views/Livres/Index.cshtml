@@ -12,12 +12,15 @@
 </p>
 
 <form asp-action="Index" method="get" class="mb-3 d-flex align-items-center">
-    <input type="text" name="searchString"
+    <input type="text" name="searchString" id="searchString"
            value="@Model.SearchString"
            placeholder="Titre ou auteur"
+           aria-label="Rechercher un livre par titre ou par auteur"
            class="form-control me-2" style="width: 250px;" />
 
-    <select name="categorieId" class="form-control me-2" style="width: 200px;">
+    <select name="categorieId" id="categorieId"
+            aria-label="Filtrer par catégorie"
+            class="form-control me-2" style="width: 200px;">
         <option value="">Toutes les catégories</option>
         @foreach (var cat in Model.Categories!)
         {
