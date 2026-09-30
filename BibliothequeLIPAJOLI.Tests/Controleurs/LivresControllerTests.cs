@@ -1,4 +1,4 @@
-using BibliothequeLIPAJOLI.Controllers;
+﻿using BibliothequeLIPAJOLI.Controllers;
 using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.Tests.Doubles;
@@ -181,18 +181,19 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         }
 
         [Fact]
-        public async Task Edit_RefuseUnIdentifiantQuiNeCorrespondPasAuFormulaire()
+        public async Task Edit_ModifieLeLivreDesigneParLAdresseEtNonParLeFormulaire()
         {
-            //Etant donne une adresse qui designe un livre et un formulaire
-            //qui en designe un autre
-            var formulaire = new LivreEditViewModel { Livre = Livre(9) };
+            //Etant donne un formulaire qui pretend modifier un autre livre
+            var formulaire = new LivreEditViewModel { Livre = Livre(99) };
+            _livres.Setup(s => s.ModifierLivreCompletAsync(1, formulaire)).ReturnsAsync(formulaire.Livre);
 
-            //Lorsque
+            //Lorsque la requete arrive sur /Livres/Edit/1
             IActionResult resultat = await _controleur.Edit(1, formulaire);
 
-            //Alors
-            Assert.IsType<NotFoundResult>(resultat);
-            _livres.Verify(s => s.ModifierLivreCompletAsync(It.IsAny<LivreEditViewModel>()), Times.Never);
+            //Alors c'est le livre 1 qui est modifie, pas le 99
+            _livres.Verify(s => s.ModifierLivreCompletAsync(1, formulaire), Times.Once);
+            _livres.Verify(s => s.ModifierLivreCompletAsync(99, It.IsAny<LivreEditViewModel>()), Times.Never);
+            Assert.Equal("Index", Assert.IsType<RedirectToActionResult>(resultat).ActionName);
         }
 
         [Fact]
@@ -200,13 +201,13 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         {
             //Etant donne un formulaire valide
             var formulaire = new LivreEditViewModel { Livre = Livre() };
-            _livres.Setup(s => s.ModifierLivreCompletAsync(formulaire)).ReturnsAsync(formulaire.Livre);
+            _livres.Setup(s => s.ModifierLivreCompletAsync(1, formulaire)).ReturnsAsync(formulaire.Livre);
 
             //Lorsque
             IActionResult resultat = await _controleur.Edit(1, formulaire);
 
             //Alors
-            _livres.Verify(s => s.ModifierLivreCompletAsync(formulaire), Times.Once);
+            _livres.Verify(s => s.ModifierLivreCompletAsync(1, formulaire), Times.Once);
             Assert.Equal("Index", Assert.IsType<RedirectToActionResult>(resultat).ActionName);
         }
 
@@ -215,7 +216,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         {
             //Etant donne un livre supprime par quelqu'un d'autre
             var formulaire = new LivreEditViewModel { Livre = Livre() };
-            _livres.Setup(s => s.ModifierLivreCompletAsync(formulaire)).ReturnsAsync((Livre?)null);
+            _livres.Setup(s => s.ModifierLivreCompletAsync(1, formulaire)).ReturnsAsync((Livre?)null);
 
             //Alors
             Assert.IsType<NotFoundResult>(await _controleur.Edit(1, formulaire));

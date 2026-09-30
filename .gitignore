@@ -364,3 +364,8 @@ FodyWeavers.xsd
 
 # Rapports de tests
 TestResults/
+
+# La base SQLite se recree au premier demarrage.
+*.db
+*.db-shm
+*.db-wal

@@ -168,8 +168,8 @@ namespace BibliothequeLIPAJOLI.Tests.Modeles
         [Theory]
         [InlineData(18)]
         [InlineData(18.5)]
-        [InlineData(18.50)]
         [InlineData(0)]
+        [InlineData(0.05)]
         public void IsValid_AccepteAuPlusDeuxDecimales(double valeur)
         {
             Assert.True(_regle.IsValid((decimal)valeur));
