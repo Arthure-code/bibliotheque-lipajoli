@@ -75,47 +75,37 @@ namespace BibliothequeLIPAJOLI.Data
             return new List<Emprunt>
             {
                 // Rendu la veille de la date limite : rien au dossier.
-                new Emprunt
-                {
-                    EmpruntID = 1, UsagerID = 1, ExemplaireID = 101,
-                    DateEmprunt = rendueATemps,
-                    DateProbableRetour = Pret.DateLimite(rendueATemps, joursDePret),
-                    DateRetour = Pret.DateLimite(rendueATemps, joursDePret).AddDays(-1)
-                },
+                Rendu(1, 1, 101, rendueATemps, joursDePret, -1),
                 // Rendu six jours après la date limite : une défaillance.
-                new Emprunt
-                {
-                    EmpruntID = 2, UsagerID = 2, ExemplaireID = 102,
-                    DateEmprunt = renduEnRetard,
-                    DateProbableRetour = Pret.DateLimite(renduEnRetard, joursDePret),
-                    DateRetour = Pret.DateLimite(renduEnRetard, joursDePret).AddDays(6)
-                },
-                new Emprunt
-                {
-                    EmpruntID = 3, UsagerID = 2, ExemplaireID = 103,
-                    DateEmprunt = Date(2025, 7, 15),
-                    DateProbableRetour = Pret.DateLimite(Date(2025, 7, 15), joursDePret)
-                },
+                Rendu(2, 2, 102, renduEnRetard, joursDePret, 6),
+                EnCours(3, 2, 103, Date(2025, 7, 15), joursDePret),
                 // Sophie tient ses trois emprunts en cours, le maximum.
-                new Emprunt
-                {
-                    EmpruntID = 4, UsagerID = 3, ExemplaireID = 104,
-                    DateEmprunt = Date(2025, 6, 1),
-                    DateProbableRetour = Pret.DateLimite(Date(2025, 6, 1), joursDePret)
-                },
-                new Emprunt
-                {
-                    EmpruntID = 5, UsagerID = 3, ExemplaireID = 105,
-                    DateEmprunt = Date(2025, 6, 10),
-                    DateProbableRetour = Pret.DateLimite(Date(2025, 6, 10), joursDePret)
-                },
-                new Emprunt
-                {
-                    EmpruntID = 6, UsagerID = 3, ExemplaireID = 106,
-                    DateEmprunt = Date(2025, 7, 1),
-                    DateProbableRetour = Pret.DateLimite(Date(2025, 7, 1), joursDePret)
-                }
+                EnCours(4, 3, 104, Date(2025, 6, 1), joursDePret),
+                EnCours(5, 3, 105, Date(2025, 6, 10), joursDePret),
+                EnCours(6, 3, 106, Date(2025, 7, 1), joursDePret)
             };
+        }
+
+        // Un exemplaire sorti et pas encore revenu : la date limite se
+        // calcule, elle ne s'ecrit pas.
+        private static Emprunt EnCours(int identifiant, int usager, int exemplaire, DateTime depart,
+            int joursDePret) => new Emprunt
+            {
+                EmpruntID = identifiant,
+                UsagerID = usager,
+                ExemplaireID = exemplaire,
+                DateEmprunt = depart,
+                DateProbableRetour = Pret.DateLimite(depart, joursDePret)
+            };
+
+        // Le meme, revenu : avant la date limite si le nombre de jours est
+        // negatif, apres si elle est depassee.
+        private static Emprunt Rendu(int identifiant, int usager, int exemplaire, DateTime depart,
+            int joursDePret, int joursApresLaLimite)
+        {
+            Emprunt emprunt = EnCours(identifiant, usager, exemplaire, depart, joursDePret);
+            emprunt.DateRetour = emprunt.DateProbableRetour!.Value.AddDays(joursApresLaLimite);
+            return emprunt;
         }
 
         // Un dossier ne porte pas de defaillance ecrite a la main : elle se
