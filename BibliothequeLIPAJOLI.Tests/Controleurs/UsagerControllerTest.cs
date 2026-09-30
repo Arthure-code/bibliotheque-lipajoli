@@ -3,10 +3,6 @@ using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
@@ -19,13 +15,7 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
 
         public UsagerControllerTest()
         {
-            _controleur = new UsagerController(_usagers.Object)
-            {
-                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
-                MetadataProvider = new EmptyModelMetadataProvider(),
-                Url = Mock.Of<IUrlHelper>(),
-                TempData = Mock.Of<ITempDataDictionary>()
-            };
+            _controleur = new UsagerController(_usagers.Object);
         }
 
         private static Usager Usager(int id = 1) => new Usager
