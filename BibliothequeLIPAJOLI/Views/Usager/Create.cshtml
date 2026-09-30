@@ -2,82 +2,13 @@
 
 @{
     ViewData["Title"] = "Ajouter un usager";
+    ViewData["TitreAdresse"] = "Adresse";
 }
 
 <h2>Ajouter un usager</h2>
 
 <form asp-action="Create" method="post" class="mt-3">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="form-group">
-        <label asp-for="Usager.NumeroAbonne"></label>
-        <input asp-for="Usager.NumeroAbonne" class="form-control" />
-        <span asp-validation-for="Usager.NumeroAbonne" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Usager.Nom"></label>
-        <input asp-for="Usager.Nom" class="form-control" />
-        <span asp-validation-for="Usager.Nom" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Usager.Prenom"></label>
-        <input asp-for="Usager.Prenom" class="form-control" />
-        <span asp-validation-for="Usager.Prenom" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Usager.Courriel"></label>
-        <input asp-for="Usager.Courriel" class="form-control" />
-        <span asp-validation-for="Usager.Courriel" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Usager.Statut"></label>
-        <select asp-for="Usager.Statut" class="form-control">
-            <option value="">-- Sélectionnez --</option>
-            <option value="Etudiant">Étudiant</option>
-            <option value="Enseignant">Enseignant</option>
-        </select>
-        <span asp-validation-for="Usager.Statut" class="text-danger"></span>
-    </div>
-    <h4 class="mt-4">Adresse</h4>
-
-    <div class="form-group">
-        <label asp-for="Adresse.Rue"></label>
-        <input asp-for="Adresse.Rue" class="form-control" />
-        <span asp-validation-for="Adresse.Rue" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Adresse.Ville"></label>
-        <input asp-for="Adresse.Ville" class="form-control" />
-        <span asp-validation-for="Adresse.Ville" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Adresse.Province"></label>
-        <input asp-for="Adresse.Province" class="form-control" />
-        <span asp-validation-for="Adresse.Province" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Adresse.CodePostale"></label>
-        <input asp-for="Adresse.CodePostale" class="form-control" />
-        <span asp-validation-for="Adresse.CodePostale" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="TypeAdresse"></label>
-        <select asp-for="TypeAdresse" class="form-control">
-            <option value="Principale">Principale</option>
-            <option value="Secondaire">Secondaire</option>
-            <option value="Bureau">Bureau</option>
-            <option value="Autre">Autre</option>
-        </select>
-        <span asp-validation-for="TypeAdresse" class="text-danger"></span>
-    </div>
+    <partial name="_Formulaire" model="Model" />
 
     <button type="submit" class="btn btn-success">Enregistrer</button>
     <a asp-action="Index" class="btn btn-secondary">Annuler</a>
