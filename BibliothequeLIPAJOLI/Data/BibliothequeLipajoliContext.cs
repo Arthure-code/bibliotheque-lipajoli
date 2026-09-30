@@ -7,9 +7,9 @@ using BibliothequeLIPAJOLI.Models;
 
 namespace BibliothequeLIPAJOLI.Data
 {
-    public class BibliothequeLIPAJOLIContext : DbContext
+    public class BibliothequeLipajoliContext : DbContext
     {
-        public BibliothequeLIPAJOLIContext(DbContextOptions<BibliothequeLIPAJOLIContext> options)
+        public BibliothequeLipajoliContext(DbContextOptions<BibliothequeLipajoliContext> options)
             : base(options)
         {
         }
