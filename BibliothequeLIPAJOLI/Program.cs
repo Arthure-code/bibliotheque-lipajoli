@@ -16,6 +16,9 @@ namespace BibliothequeLIPAJOLI
             builder.Services.AddDbContext<BibliothequeLipajoliContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("BibliothequeLipajoliContext") ?? throw new InvalidOperationException("Connection string 'BibliothequeLipajoliContext' not found.")));
 
+            builder.Services.AddScoped<ILivreDepot, LivreDepot>();
+            builder.Services.AddScoped<IUsagerDepot, UsagerDepot>();
+
             builder.Services.AddScoped<ILivreService, GestionLivres>();
             builder.Services.AddScoped<IUsagerService, GestionUsager>();
 

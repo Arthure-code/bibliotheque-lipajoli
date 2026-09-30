@@ -4,6 +4,7 @@ using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.Tests.Doubles;
 using BibliothequeLIPAJOLI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace BibliothequeLIPAJOLI.Tests.Controleurs
@@ -173,6 +174,46 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
         }
 
         [Fact]
+        public async Task Delete_PresenteLeDossierAvantDeLeSupprimer()
+        {
+            //Etant donne un dossier au fichier
+            _usagers.Setup(s => s.ObtenirUsagerParIdAsync(1)).ReturnsAsync(Usager());
+
+            //Lorsque la page de confirmation s'ouvre
+            IActionResult resultat = await _controleur.Delete(1);
+
+            //Alors elle montre le dossier, sans message d'echec
+            var vue = Assert.IsType<ViewResult>(resultat);
+            Assert.Equal(1, Assert.IsType<Usager>(vue.Model).ID);
+            Assert.Null(_controleur.ViewData["MessageErreur"]);
+        }
+
+        [Fact]
+        public async Task Delete_RetourneIntrouvableQuandLeDossierNExistePas()
+        {
+            //Etant donne un identifiant qui ne designe personne
+            _usagers.Setup(s => s.ObtenirUsagerParIdAsync(404)).ReturnsAsync((Usager?)null);
+
+            //Alors
+            Assert.IsType<NotFoundResult>(await _controleur.Delete(404));
+        }
+
+        [Fact]
+        public async Task Delete_ExpliqueLEchecQuandLaSuppressionARate()
+        {
+            //Etant donne un retour de la suppression qui a echoue
+            _usagers.Setup(s => s.ObtenirUsagerParIdAsync(1)).ReturnsAsync(Usager());
+
+            //Lorsque la page se rouvre
+            IActionResult resultat = await _controleur.Delete(1, suppressionImpossible: true);
+
+            //Alors le visiteur lit pourquoi, au lieu d'une page blanche
+            Assert.IsType<ViewResult>(resultat);
+            Assert.Contains("La suppression a échoué",
+                _controleur.ViewData["MessageErreur"]?.ToString());
+        }
+
+        [Fact]
         public async Task DeleteConfirmed_SupprimeLeDossierEtRevientALaListe()
         {
             //Lorsque
@@ -181,6 +222,23 @@ namespace BibliothequeLIPAJOLI.Tests.Controleurs
             //Alors
             _usagers.Verify(s => s.SupprimerUsagerAsync(1), Times.Once);
             Assert.Equal("Index", Assert.IsType<RedirectToActionResult>(resultat).ActionName);
+        }
+
+        [Fact]
+        public async Task DeleteConfirmed_RenvoieSurLaPageQuandLaBaseRefuse()
+        {
+            //Etant donne un usager encore lie a un emprunt
+            _usagers.Setup(s => s.SupprimerUsagerAsync(1))
+                .ThrowsAsync(new DbUpdateException("La cle etrangere retient le dossier."));
+
+            //Lorsque
+            IActionResult resultat = await _controleur.DeleteConfirmed(1);
+
+            //Alors la page revient en annoncant l'echec, sans s'effondrer
+            var redirection = Assert.IsType<RedirectToActionResult>(resultat);
+            Assert.Equal("Delete", redirection.ActionName);
+            Assert.Equal(1, redirection.RouteValues!["id"]);
+            Assert.Equal(true, redirection.RouteValues["suppressionImpossible"]);
         }
     }
 }
