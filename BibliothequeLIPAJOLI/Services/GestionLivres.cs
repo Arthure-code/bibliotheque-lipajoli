@@ -1,27 +1,24 @@
-﻿using BibliothequeLIPAJOLI.Data;
-using BibliothequeLIPAJOLI.Interfaces;
+﻿using BibliothequeLIPAJOLI.Interfaces;
 using BibliothequeLIPAJOLI.Models;
 using BibliothequeLIPAJOLI.Regles;
 using BibliothequeLIPAJOLI.ViewModels;
-using Microsoft.EntityFrameworkCore;
 
 namespace BibliothequeLIPAJOLI.Services
 {
     public class GestionLivres : ILivreService
     {
-        private readonly BibliothequeLipajoliContext _context;
+        private readonly ILivreDepot _depot;
         private readonly IReferentielService _referentiel;
 
-        public GestionLivres(BibliothequeLipajoliContext context, IReferentielService referentiel)
+        public GestionLivres(ILivreDepot depot, IReferentielService referentiel)
         {
-            _context = context;
+            _depot = depot;
             _referentiel = referentiel;
         }
 
         public async Task<Livre?> ObtenirLivreParIdAsync(int identifiantLivre)
         {
-            Livre? livre = await ChargerLeCatalogue()
-                .FirstOrDefaultAsync(l => l.LivreID == identifiantLivre);
+            Livre? livre = await _depot.ObtenirAvecSesLiensAsync(identifiantLivre);
 
             if (livre != null)
             {
@@ -33,32 +30,9 @@ namespace BibliothequeLIPAJOLI.Services
 
         public async Task<List<Livre>> RechercherLivresAsync(string? texteCherche = null, int? categorieId = null)
         {
-            IQueryable<Livre> requete = _context.Livres;
+            string? terme = string.IsNullOrWhiteSpace(texteCherche) ? null : texteCherche.Trim();
 
-            if (!string.IsNullOrWhiteSpace(texteCherche))
-            {
-                string terme = texteCherche.Trim();
-
-                // Les auteurs viennent de la configuration, pas de la base :
-                // on résout les noms, puis on garde les livres signés.
-                List<int> auteursTrouves = _referentiel.ObtenirAuteurs()
-                    .Where(a => Texte.Contient($"{a.Prenom} {a.Nom}", terme)
-                             || Texte.Contient($"{a.Nom} {a.Prenom}", terme))
-                    .Select(a => a.ID)
-                    .ToList();
-
-                // Like ignore la casse, Contains non.
-                requete = requete.Where(l =>
-                    (l.Titre != null && EF.Functions.Like(l.Titre, $"%{terme}%"))
-                    || l.Redactions.Any(r => auteursTrouves.Contains(r.AuteurID)));
-            }
-
-            if (categorieId.HasValue)
-            {
-                requete = requete.Where(l => l.CategorieID == categorieId.Value);
-            }
-
-            List<Livre> livres = await ChargerLeCatalogue(requete).ToListAsync();
+            List<Livre> livres = await _depot.ChercherAsync(terme, AuteursQuiRepondentA(terme), categorieId);
             livres.ForEach(Enrichir);
             return livres;
         }
@@ -97,8 +71,8 @@ namespace BibliothequeLIPAJOLI.Services
 
             formulaire.Livre.Code = await AttribuerLeCodeAsync(formulaire.Livre.CategorieID);
 
-            _context.Livres.Add(formulaire.Livre);
-            await _context.SaveChangesAsync();
+            _depot.Ajouter(formulaire.Livre);
+            await _depot.EnregistrerAsync();
             Enrichir(formulaire.Livre);
             return formulaire.Livre;
         }
@@ -107,11 +81,7 @@ namespace BibliothequeLIPAJOLI.Services
         {
             ArgumentNullException.ThrowIfNull(formulaire);
 
-            Livre? livre = await _context.Livres
-                .Include(l => l.Redactions)
-                .Include(l => l.Editions).ThenInclude(e => e.Exemplaires)
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(l => l.LivreID == identifiantLivre);
+            Livre? livre = await _depot.ObtenirPourModificationAsync(identifiantLivre);
 
             if (livre == null)
             {
@@ -122,7 +92,7 @@ namespace BibliothequeLIPAJOLI.Services
             // ni son code, qui lui appartient pour toute sa vie.
             formulaire.Livre.LivreID = livre.LivreID;
             formulaire.Livre.Code = livre.Code;
-            _context.Entry(livre).CurrentValues.SetValues(formulaire.Livre);
+            _depot.RemplacerLesValeurs(livre, formulaire.Livre);
 
             livre.Redactions = formulaire.Redactions.Select(auteurId => new Redaction
             {
@@ -132,31 +102,38 @@ namespace BibliothequeLIPAJOLI.Services
                 Ordre = 1
             }).ToList();
 
-            await _context.SaveChangesAsync();
+            await _depot.EnregistrerAsync();
             Enrichir(livre);
             return livre;
         }
 
         public async Task<bool> SupprimerLivreAsync(int identifiantLivre)
         {
-            Livre? livre = await _context.Livres.FindAsync(identifiantLivre);
+            Livre? livre = await _depot.ObtenirAsync(identifiantLivre);
             if (livre == null)
             {
                 return false;
             }
 
-            _context.Livres.Remove(livre);
-            await _context.SaveChangesAsync();
+            _depot.Supprimer(livre);
+            await _depot.EnregistrerAsync();
             return true;
         }
 
-        private IQueryable<Livre> ChargerLeCatalogue(IQueryable<Livre>? depuis = null)
+        // Les auteurs viennent de la configuration, pas de la base : on resout
+        // les noms ici, puis le depot garde les livres que ces auteurs ont signes.
+        private List<int> AuteursQuiRepondentA(string? terme)
         {
-            return (depuis ?? _context.Livres)
-                .Include(l => l.Redactions)
-                .Include(l => l.Editions).ThenInclude(e => e.Exemplaires)
-                    .ThenInclude(ex => ex.Emprunts)
-                .AsSplitQuery();
+            if (terme == null)
+            {
+                return new List<int>();
+            }
+
+            return _referentiel.ObtenirAuteurs()
+                .Where(a => Texte.Contient($"{a.Prenom} {a.Nom}", terme)
+                         || Texte.Contient($"{a.Nom} {a.Prenom}", terme))
+                .Select(a => a.ID)
+                .ToList();
         }
 
         private void Enrichir(Livre livre)
@@ -175,10 +152,7 @@ namespace BibliothequeLIPAJOLI.Services
             Categorie? categorie = _referentiel.ObtenirCategorieParId(categorieID);
             string prefixe = Codification.Prefixe(categorie?.NomCategorie);
 
-            List<string?> codesDejaAttribues = await _context.Livres
-                .Where(l => l.Code != null && l.Code.StartsWith(prefixe))
-                .Select(l => l.Code)
-                .ToListAsync();
+            List<string?> codesDejaAttribues = await _depot.ListerLesCodesCommencantParAsync(prefixe);
 
             return Codification.Suivant(prefixe, codesDejaAttribues);
         }
